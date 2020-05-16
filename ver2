@@ -1,0 +1,122 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Partition {
+	
+    private static List<List<List<String>>> partitions(List<String> inputSet) {
+    	
+        List<List<List<String>>> pset = new ArrayList<>();
+        if (inputSet.isEmpty()) {
+        	
+            List<List<String>> empty = new ArrayList<>();
+            pset.add(empty);
+            return pset;
+        }
+        
+        int limit = 1 << (inputSet.size() - 1);
+        
+        for (int j = 0; j < limit; j++) {
+        	//List<List<String>>で繰り返し処理をするごとに新しい要素を作る
+        	
+            List<List<String>> parts = new ArrayList<>();
+            List<String> part1 = new ArrayList<>();
+            List<String> part2 = new ArrayList<>();
+            parts.add(part1);
+            parts.add(part2);
+            int i = j;
+            for (String item : inputSet) {
+                parts.get(i&1).add(item);
+                i >>= 1;
+            }
+            
+            for (List<List<String>> b : partitions(part2)) {
+                List<List<String>> pset2 = new ArrayList<>();
+                pset2.add(part1);
+                pset2.addAll(b);
+                pset.add(pset2);
+            }
+        }
+        return pset;
+    }
+    
+    public static void main(String[] args) {
+    	int count = 0;
+    	
+    	System.out.println("All Partitions of [P11,P2,X11,X12,X21,X22,X31,X32] are:");
+      /*  for (List<List<String>> partitions :
+        		partitions(Arrays.asList("P1","P2","X11","X12"))) {
+            System.out.println(partitions);																									
+        	count++;
+            for(int i = 0; i < partitions.size()/2; i++) {
+          partitions.get(0).size()==1 || partitions.get(1).size()==1 //4要素の時は成り立つ
+	                if (partitions.get(0).size()==1 || partitions.get(1).size()==1) {
+	                    System.out.println(partitions.size());
+	                    System.out.println(partitions.get(i).size());
+	                	break;
+	                 }
+	                else{
+	                	System.out.println(partitions);
+	                	count++;
+	                }
+              }
+        }
+    	*/
+        for (List<List<String>> Set :
+    		partitions(Arrays.asList("P1","P2","X11","X11"))) {
+        	boolean flg=true;
+//    		System.out.println(Set);
+//    		count++;
+	       for(List<String> partitions: Set){
+	    	 //①条件1:ショート端子が存在する
+			   	if (partitions.size() < 2 || partitions.size() > 3) { 
+				   	flg=false;
+			       	continue;
+		    	}	
+			  //②条件2:独立する素子が存在する
+		    	if((Set.contains(Arrays.asList("P1","P2")) || Set.contains(Arrays.asList("X11","X11")) || 
+		    			Set.contains(Arrays.asList("X22","X22")) ||Set.contains(Arrays.asList("X33","X33")) ||
+		    			Set.contains(Arrays.asList("X44","X44"))||Set.contains(Arrays.asList("X11","X33","X33")) ||
+		    			Set.contains(Arrays.asList("X22","X33","X33"))||Set.contains(Arrays.asList("P1","X33","X33")) ||
+		    			Set.contains(Arrays.asList("P2","X33","X33")) || Set.contains(Arrays.asList("X22","X22","X33")))){
+		    	  flg = false;
+		    	  continue;
+	    	   }
+		    
+		     //③条件3: 短絡
+		    	boolean a = Set.contains(Arrays.asList("P1","P2","X11"));
+		    	boolean	a1= Set.contains(Arrays.asList("P1","X11","P2"));
+		    	boolean a2 = Set.contains(Arrays.asList("P1","P2","X11","X33"));
+		    	boolean b = Set.contains(Arrays.asList("P1","P1","X22"));
+//		    	boolean c = Set.contains(Arrays.asList("P1","P","X21"));
+		    	boolean d = Set.contains(Arrays.asList("P1","P2","X22"));
+		    	boolean e = Set.contains(Arrays.asList("P1","P2","X33"));
+//		    	boolean f = Set.contains(Arrays.asList("P1","P2","X33"));
+		    	
+		     	boolean g = Set.contains(Arrays.asList("X11","X11","X33"));
+//		    	boolean h = Set.contains(Arrays.asList("X11","X11","P2"));
+		    	boolean i = Set.contains(Arrays.asList("P1","X22","X22"));
+//		    	boolean i2 = Set.contains(Arrays.asList("P1","X21","X22"));
+		    	boolean j = Set.contains(Arrays.asList("P2","X22","X22"));
+		    	boolean k = Set.contains(Arrays.asList("X33","X33","P1"));
+		    	
+//		    	boolean l = Set.contains(Arrays.asList("X31","X32","P2"));
+		    	
+//		    	[[P2, X12, X21, X22]
+		    	if(a || a1 || a2 ||b || d || e || g ||
+		    			i  || j || k){
+		    	  flg = false;
+		    	  continue;
+	    	   }
+	       }
+	       
+	       if(flg){
+		       
+	    	   System.out.println(Set);
+		       count++;
+		           
+	        }
+        }
+        System.out.println("Total partition:"+count);
+    }
+}
